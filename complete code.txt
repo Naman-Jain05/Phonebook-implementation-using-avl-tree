@@ -1,0 +1,1049 @@
+/*	BT20CSE087 Naman Jain
+
+	>compiled on DEV-C++ 5.11
+			or
+	>https://www.onlinegdb.com/online_c_compiler
+	
+	>enter name without space everywhere 
+	>name should be case sensititve
+	>phone number is considered as integer 
+	>address,institute name are taken as char
+	>sort function displays list in ascending or descending order of phone number
+	>sort based on first name->displays earlier entry in ascending order of name
+	>balance factor is considered = left height- right height
+	>for avl tree balance factor should be : -1,0,1
+	>phone number is taken as key
+	 
+*/
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct perentry 
+{	
+	char name[50];
+	char last_name[50];
+	char mail[50];
+	int type;
+	
+} Entry;
+
+struct per_tree_node 
+{
+	int phoneNo;//key
+	Entry data;
+	int hight;
+	struct per_tree_node *left;
+	struct per_tree_node *right;
+};
+
+typedef struct prof_entry 
+{
+	char name[50];
+	char last_name[50];
+	char mail[50];
+	int officeNo;
+	char address[50];
+	int type;
+	char institute[50];
+	
+} profEntry;
+
+struct prof_tree_node 
+{
+	int phoneNo;//key
+	profEntry data;
+	int hight;
+	struct prof_tree_node *left;
+	struct prof_tree_node *right;
+};
+
+enum status_code{success,fail};
+enum status_code sc;
+
+int max(int a, int b)
+ {
+  return (a > b) ? a : b;
+}
+
+int height(struct per_tree_node  *N) 			//get height of personal	
+{
+	int retval;
+  	if (N == NULL)
+  	{
+  		retval=0;		
+  	}
+  	else
+  	{
+  		retval=N->hight;
+  	}
+    return retval;
+}
+
+int prof_height(struct prof_tree_node  *N)			//get height of professional 
+{
+	int retval;
+  	if (N == NULL)
+  	{
+  		retval=0;		
+  	}
+  	else
+  	{
+  		retval=N->hight;
+  	}
+    return retval;
+}
+
+struct per_tree_node* per_create_node(int n, Entry e) 				//creating new node and setting values in personal
+{	
+	struct per_tree_node* newnode;
+	newnode = (struct per_tree_node*)(malloc(sizeof(struct per_tree_node)));
+	newnode->data = e;
+	newnode->phoneNo=n;
+	newnode->hight=1;
+	newnode->data.type=0;
+	newnode->left = NULL;
+	newnode->right = NULL;
+	return newnode;
+}
+
+struct prof_tree_node* prof_create_node(int n, profEntry pe)		//creating new node and setting values in professional
+{	
+	struct prof_tree_node* newnode;
+	newnode = (struct prof_tree_node*)(malloc(sizeof(struct prof_tree_node)));
+	newnode->data = pe;
+	newnode->phoneNo=n;
+	newnode->hight=1;
+	newnode->data.type=1;
+	newnode->left = NULL;
+	newnode->right = NULL;
+	return newnode;
+}
+
+int getBalance(struct per_tree_node *N) 			//gives balance factor in personal node
+{
+  int retval;
+  if (N == NULL)
+  {
+  	retval=0;
+  }
+  else
+  {
+  	retval=height(N->left) - height(N->right);
+  }
+  return retval;
+}
+
+int prof_getBalance(struct prof_tree_node *N)		//gives balance factor in professional node
+{
+  int retval;
+  if (N == NULL)
+  {
+  	retval=0;
+  }
+  else
+  {
+  	retval=prof_height(N->left) - prof_height(N->right);
+  }
+  return retval;
+}
+
+void per_inorder(struct per_tree_node* root)		//personal inorder
+{
+    if (root != NULL) 
+	{
+		sc=success;
+        per_inorder(root->left);
+        printf("%d :%d :%s :%s :%s\n",root->phoneNo,getBalance(root),root->data.name,root->data.last_name,root->data.mail);
+		per_inorder(root->right);
+    }
+}
+
+void per_inorder_rev(struct per_tree_node* root)		//in reverse order right->print->left
+{
+    if (root != NULL) 
+	{
+		sc=success;
+        per_inorder_rev(root->right);
+        printf("%d :%d :%s :%s :%s\n",root->phoneNo,getBalance(root),root->data.name,root->data.last_name,root->data.mail);
+		per_inorder_rev(root->left);
+    }
+}
+
+void prof_inorder(struct prof_tree_node* root)			//professional inorder
+{
+    if (root != NULL) 
+	{
+		sc=success;
+        prof_inorder(root->left);
+        printf("%d :%d :%s :%s :%s :%s :%s %d\n",root->phoneNo,prof_getBalance(root),root->data.name,root->data.last_name,root->data.mail,root->data.address,root->data.institute,root->data.officeNo);
+		prof_inorder(root->right);
+    }
+}
+
+void prof_inorder_rev(struct prof_tree_node* root)		//in reverse order right->print->left
+{
+    if (root != NULL) 
+	{
+		sc=success;
+        prof_inorder_rev(root->right);
+        printf("%d :%d :%s :%s :%s :%s :%s %d\n",root->phoneNo,prof_getBalance(root),root->data.name,root->data.last_name,root->data.mail,root->data.address,root->data.institute,root->data.officeNo);
+		prof_inorder_rev(root->left);
+    }
+}
+
+void per_range(struct per_tree_node* root,int k1,int k2)
+{
+   	if (root!=NULL )
+    {
+      
+ 	if ( k1 < root->phoneNo)
+ 	{
+ 		per_range(root->left, k1, k2);
+	}
+    
+ 	if ( k1 <= root->phoneNo && k2 >= root->phoneNo )			//if in range print
+ 	{
+ 		sc=success;
+ 		printf("%d :%d :%s :%s :%s\n",root->phoneNo,getBalance(root),root->data.name,root->data.last_name,root->data.mail);
+	}
+     
+ 	per_range(root->right, k1, k2);
+ 	}
+ 	
+}
+
+void prof_range(struct prof_tree_node* root,int k1,int k2)
+{
+   	if (root!=NULL )
+    {
+      
+ 	if ( k1 < root->phoneNo)
+ 	{
+ 		prof_range(root->left, k1, k2);
+	}
+    
+ 	if ( k1 <= root->phoneNo && k2 >= root->phoneNo )		//if in range print
+ 	{
+ 		sc=success;
+ 		printf("%d :%d :%s :%s :%s :%s :%s %d\n",root->phoneNo,prof_getBalance(root),root->data.name,root->data.last_name,root->data.mail,root->data.address,root->data.institute,root->data.officeNo);
+	}
+     
+ 	prof_range(root->right, k1, k2);
+ 	}
+}
+
+struct per_tree_node *minValueNode(struct per_tree_node *node) 		//get leftmost node
+{
+  struct per_tree_node *current = node;
+
+  while (current->left != NULL)
+  {
+  	current = current->left;
+  }
+
+  return current;
+}
+
+
+struct prof_tree_node *profminValueNode(struct prof_tree_node *node)  //get leftmost node
+{
+  struct prof_tree_node *current = node;
+
+  while (current->left != NULL)
+  {
+  	current = current->left;
+  }
+
+  return current;
+}
+
+// Right rotate personal
+struct per_tree_node *rightRotate(struct per_tree_node *y) 
+{
+  struct per_tree_node *x = y->left;
+  struct per_tree_node *T2 = x->right;
+
+  x->right = y;
+  y->left = T2;
+
+  y->hight = max(height(y->left), height(y->right)) + 1;
+  x->hight = max(height(x->left), height(x->right)) + 1;
+
+  return x;
+}
+
+// Left rotate personal
+struct per_tree_node *leftRotate(struct per_tree_node *x) 
+{
+  struct per_tree_node *y = x->right;
+  struct per_tree_node *T2 = y->left;
+
+  y->left = x;
+  x->right = T2;
+
+  x->hight = max(height(x->left), height(x->right)) + 1;
+  y->hight = max(height(y->left), height(y->right)) + 1;
+
+  return y;
+}
+
+
+// Right rotate professional
+struct prof_tree_node *profrightRotate(struct prof_tree_node *y) 
+{
+  struct prof_tree_node *x = y->left;
+  struct prof_tree_node *T2 = x->right;
+
+  x->right = y;
+  y->left = T2;
+
+  y->hight = max(prof_height(y->left), prof_height(y->right)) + 1;
+  x->hight = max(prof_height(x->left), prof_height(x->right)) + 1;
+
+  return x;
+}
+
+// Left rotate professional
+struct prof_tree_node *profleftRotate(struct prof_tree_node *x) 
+{
+  struct prof_tree_node *y = x->right;
+  struct prof_tree_node *T2 = y->left;
+
+  y->left = x;
+  x->right = T2;
+
+  x->hight = max(prof_height(x->left), prof_height(x->right)) + 1;
+  y->hight = max(prof_height(y->left), prof_height(y->right)) + 1;
+
+  return y;
+}
+
+
+struct per_tree_node *insertNode(struct per_tree_node *nod, int key,Entry e)		//insert in personal //phone number is key
+{
+  if (nod == NULL)
+  {
+  	return (per_create_node(key, e));
+  } 
+  if (key < nod->phoneNo)
+  {
+  	nod->left = insertNode(nod->left, key,e);
+  }
+  else if (key > nod->phoneNo)
+  {
+  	nod->right = insertNode(nod->right, key,e);
+  }
+  else
+  {
+  	sc=fail;
+  	 return nod;
+  }
+   
+  nod->hight = 1 + max(height(nod->left),height(nod->right));
+
+  int balance = getBalance(nod);
+  if (balance > 1 && key < nod->left->phoneNo)
+  {
+  	return rightRotate(nod);
+  }
+    
+  if (balance < -1 && key > nod->right->phoneNo)
+  {
+  	return leftRotate(nod);
+  }
+    
+  if (balance > 1 && key > nod->left->phoneNo) 
+  {
+    nod->left = leftRotate(nod->left);
+    return rightRotate(nod);
+  }
+
+  if (balance < -1 && key < nod->right->phoneNo) 
+  {
+    nod->right = rightRotate(nod->right);
+    return leftRotate(nod);
+  }
+
+  return nod;
+}
+
+
+struct prof_tree_node *profinsertNode(struct prof_tree_node *nod, int key,profEntry pe)		//insert in professional 
+{
+  if (nod == NULL)
+  {
+  	return (prof_create_node(key, pe));
+  } 
+  if (key < nod->phoneNo)
+  {
+  	nod->left = profinsertNode(nod->left, key,pe);
+  }
+  else if (key > nod->phoneNo)
+  {
+  	nod->right = profinsertNode(nod->right, key,pe);
+  }
+  else
+  {
+  	sc=fail;
+  	 return nod;
+  }
+   
+  nod->hight = 1 + max(prof_height(nod->left),prof_height(nod->right));
+
+  int balance = prof_getBalance(nod);
+  if (balance > 1 && key < nod->left->phoneNo)
+  {
+  	return profrightRotate(nod);
+  }
+    
+  if (balance < -1 && key > nod->right->phoneNo)
+  {
+  	return profleftRotate(nod);
+  }
+    
+  if (balance > 1 && key > nod->left->phoneNo) 
+  {
+    nod->left = profleftRotate(nod->left);
+    return profrightRotate(nod);
+  }
+
+  if (balance < -1 && key < nod->right->phoneNo) 
+  {
+    nod->right = profrightRotate(nod->right);
+    return profleftRotate(nod);
+  }
+
+  return nod;
+}
+
+struct per_tree_node *deleteNode(struct per_tree_node *root, int key)   //delete node from personal
+{
+  if (root == NULL)
+  {
+  	return root;
+  }
+  if (key < root->phoneNo)
+  {
+  	root->left = deleteNode(root->left, key);
+  }
+  else if (key > root->phoneNo)
+  {
+  	root->right = deleteNode(root->right, key);
+  }
+  
+  else 
+  {
+    if ((root->left == NULL) || (root->right == NULL)) 
+	{
+      struct per_tree_node *t = root->left ? root->left : root->right;
+
+      if (t == NULL) 
+	  {
+        t = root;
+        root = NULL;
+      } 
+	  else
+	  {
+	  	*root = *t;
+	  }
+      free(t);
+    } 
+	else 
+	{
+      struct per_tree_node *temp = minValueNode(root->right);
+      root->phoneNo = temp->phoneNo;
+      root->right = deleteNode(root->right, temp->phoneNo);
+    }
+  }
+
+  if (root == NULL)
+  {
+  	return root;
+  }
+    
+  // Update the balance factor of each node and balance the tree
+  root->hight = 1 + max(height(root->left),height(root->right));
+
+  int balance = getBalance(root);
+  if (balance > 1 && getBalance(root->left) >= 0)
+  {
+  	return rightRotate(root);
+  }
+  if (balance > 1 && getBalance(root->left) < 0) 
+  {
+    root->left = leftRotate(root->left);
+    return rightRotate(root);
+  }
+  if (balance < -1 && getBalance(root->right) <= 0)
+  {
+  	return leftRotate(root);
+  }
+  if (balance < -1 && getBalance(root->right) > 0) 
+  {
+    root->right = rightRotate(root->right);
+    return leftRotate(root);
+  }
+
+  return root;
+}
+
+
+struct prof_tree_node *profdeleteNode(struct prof_tree_node *root, int key)  //delete node from professional
+{
+  if (root == NULL)
+  {
+  	return root;
+  }
+  if (key < root->phoneNo)
+  {
+  	root->left = profdeleteNode(root->left, key);
+  }
+  else if (key > root->phoneNo)
+  {
+  	root->right = profdeleteNode(root->right, key);
+  }
+  
+  else 
+  {
+    if ((root->left == NULL) || (root->right == NULL)) 
+	{
+      struct prof_tree_node *t = root->left ? root->left : root->right;
+
+      if (t == NULL) 
+	  {
+        t = root;
+        root = NULL;
+      } 
+	  else
+	  {
+	  	*root = *t;
+	  }
+      free(t);
+    } 
+	else 
+	{
+      struct prof_tree_node *temp = profminValueNode(root->right);
+      root->phoneNo = temp->phoneNo;
+      root->right = profdeleteNode(root->right, temp->phoneNo);
+    }
+  }
+
+  if (root == NULL)
+  {
+  	return root;
+  }
+    
+  // Update the balance factor of each node and balance the tree
+  root->hight = 1 + max(prof_height(root->left),prof_height(root->right));
+
+  int balance = prof_getBalance(root);
+  if (balance > 1 && prof_getBalance(root->left) >= 0)
+  {
+  	return profrightRotate(root);
+  }
+  if (balance > 1 && prof_getBalance(root->left) < 0) 
+  {
+    root->left = profleftRotate(root->left);
+    return profrightRotate(root);
+  }
+  if (balance < -1 && prof_getBalance(root->right) <= 0)
+  {
+  	return profleftRotate(root);
+  }
+  if (balance < -1 && prof_getBalance(root->right) > 0) 
+  {
+    root->right = profrightRotate(root->right);
+    return profleftRotate(root);
+  }
+
+  return root;
+}
+
+
+void search_per(struct per_tree_node* root,int key)		//bst search in O(logN) (binary)
+{
+    if(root==NULL)
+    {
+        printf("No such number exist in tree\n");
+    }
+	else
+	{
+	
+    if(root->phoneNo==key)
+    {
+    	sc=success;
+    	printf("phone-no,height,first-name,last-name,email:\n");
+    	printf("%d :%d :%s :%s :%s\n",root->phoneNo,root->hight,root->data.name,root->data.last_name,root->data.mail);
+    	
+    }
+    if(root->phoneNo>key)
+    {
+        search_per(root->left,key);
+    }
+    if(root->phoneNo<key)
+    {
+        search_per(root->right,key);
+    } 
+	}
+    
+}
+
+void search_prof(struct prof_tree_node* root,int key)		//bst search in O(logN) (binary)
+{
+    if(root==NULL)
+    {
+        printf("No such number exist in tree\n"); 
+    }
+	else
+	{
+	
+    if(root->phoneNo==key)
+    {
+    	sc=success;
+    	printf("phone-no,height,first-name,last-name,email,address,institute,office-no:\n");
+    	printf("%d :%d :%s :%s :%s :%s :%s %d\n",root->phoneNo,root->hight,root->data.name,root->data.last_name,root->data.mail,root->data.address,root->data.institute,root->data.officeNo);
+    
+    }
+    if(root->phoneNo>key)
+    {
+        search_prof(root->left,key);
+    }
+    if(root->phoneNo<key)
+    {
+        search_prof(root->right,key);
+    } 
+	}
+    
+}
+
+void edit_per(struct per_tree_node* root,int key,Entry e)		//binary search then edit
+{
+    if(root==NULL)
+    {
+        printf("No such number exist in tree\n"); 
+    }
+	else
+	{
+	
+    if(root->phoneNo==key)
+    {
+    	sc=success;
+    	root->data = e;
+    	
+    }
+    if(root->phoneNo>key)
+    {
+        edit_per(root->left,key,e);
+    }
+    if(root->phoneNo<key)
+    {
+        edit_per(root->right,key,e);
+    } 
+    
+	}
+}
+
+void edit_prof(struct prof_tree_node* root,int key,profEntry pe)		//binary search then edit
+{
+    if(root==NULL)
+    {
+        printf("No such number exist in tree\n"); 
+    }
+	else
+	{
+	
+    if(root->phoneNo==key)
+    {
+    	sc=success;
+    	root->data = pe;
+    	
+    }
+    if(root->phoneNo>key)
+    {
+        edit_prof(root->left,key,pe);
+    }
+    if(root->phoneNo<key)
+    {
+        edit_prof(root->right,key,pe);
+    } 
+	}
+}
+
+struct per_tree_node *insert_name(struct per_tree_node *nod, int number,Entry e)//based on name see net1.c
+{
+	if (nod == NULL)
+  	{
+  	return (per_create_node(number, e));
+  	} 
+  	if (strcmp(nod->data.name,e.name)>0)
+  	{
+  	nod->left = insert_name(nod->left, number,e);
+  	}
+  	else if (strcmp(nod->data.name,e.name)<0)
+  	{
+  	nod->right = insert_name(nod->right, number,e);
+  	}
+  	else
+  	{
+  	 	nod=insertNode(nod, number,e);//if name are same insert based on number
+  	}
+  	
+  	nod->hight = 1 + max(height(nod->left),height(nod->right));
+
+  int balance = getBalance(nod);
+  if (balance > 1 && strcmp(e.name,nod->left->data.name)<0)//key < nod->left->phoneNo	
+  {
+  	return rightRotate(nod);
+  }
+    
+  if (balance < -1 && strcmp(e.name,nod->right->data.name)>0)//key > nod->right->phoneNo	
+  {
+  	return leftRotate(nod);
+  }
+    
+  if (balance > 1 && strcmp(e.name,nod->left->data.name)>0)
+  {
+    nod->left = leftRotate(nod->left);
+    return rightRotate(nod);
+  }
+
+  if (balance < -1 && strcmp(e.name,nod->right->data.name)<0)	 
+  {
+    nod->right = rightRotate(nod->right);
+    return leftRotate(nod);
+  }
+
+  return nod;
+}
+
+struct prof_tree_node *insert_prof_name(struct prof_tree_node *nod, int number,profEntry pe)
+{
+	if (nod == NULL)
+  	{
+  	return (prof_create_node(number, pe));
+  	} 
+  	if (strcmp(nod->data.name,pe.name)>0)
+  	{
+  	nod->left = insert_prof_name(nod->left, number,pe);
+  	}
+  	else if (strcmp(nod->data.name,pe.name)<0)
+  	{
+  	nod->right = insert_prof_name(nod->right, number,pe);
+  	}
+  	else
+  	{
+  	 	nod=profinsertNode(nod, number,pe);//if name are same insert based on number
+  	}
+  	
+  	nod->hight = 1 + max(prof_height(nod->left),prof_height(nod->right));
+
+  int balance = prof_getBalance(nod);
+  if (balance > 1 && strcmp(pe.name,nod->left->data.name)<0)//key < nod->left->phoneNo
+  {
+  	return profrightRotate(nod);
+  }
+    
+  if (balance < -1 && strcmp(pe.name,nod->right->data.name)>0)//key > nod->right->phoneNo
+  {
+  	return profleftRotate(nod);
+  }
+    
+  if (balance > 1 && strcmp(pe.name,nod->left->data.name)>0) 
+  {
+    nod->left = profleftRotate(nod->left);
+    return profrightRotate(nod);
+  }
+
+  if (balance < -1 && strcmp(pe.name,nod->right->data.name)<0) 
+  {
+    nod->right = profrightRotate(nod->right);
+    return profleftRotate(nod);
+  }
+
+  return nod;
+}
+
+int main() //driver function
+{ 
+	int run=1,choice,t,pno;
+	Entry e;
+	profEntry pe;
+	
+	struct per_tree_node* head_per=NULL;
+	struct prof_tree_node* head_prof=NULL;
+	struct per_tree_node* per_name=NULL;
+	struct prof_tree_node* prof_name=NULL;
+	
+	
+	while(run!=0)
+  	{
+	
+	printf("\npress\t1 to insert \t 2 to edit \t 3 to delete\n \t4 to search \t 5 to sort \t 6 to display\n"
+	 "\t7 to range search\t8 to sort based on name \n\n");
+	printf("enter choice:");
+	scanf("%d",&choice);
+	
+	switch(choice)
+		{
+		case 1:
+			printf("choose 0 for personal 1 for professional:\n");
+			scanf("%d",&t);
+			sc=success;
+			if(t==0)
+			{
+				printf("enter your name,last-name,email,mobileNo:\n");
+				scanf("%s",e.name);
+				scanf("%s",e.last_name);
+				scanf("%s",e.mail);
+				scanf("%d",&pno);
+				/*inserting taking phone number a main key*/
+				head_per=insertNode(head_per,pno,e);
+				 
+				 /* also inserting based on name just for question(case) 8*/
+				per_name=insert_name(per_name,pno,e);
+				if(sc==fail)
+				{
+				 	printf("Given entry already exist\n");
+				}
+				else
+				{
+				 	printf("\npersonal Contact has been created\n");
+				}
+				 
+			}
+			else
+			{
+				printf("enter your name,last-name,email,address,institute,mobileNo,officeNo:\n");
+				
+				scanf("%s%s%s%s%s%d%d",pe.name,pe.last_name,pe.mail,pe.address,pe.institute,&pno,&pe.officeNo);
+				/*inserting taking phone number a main key*/
+				head_prof=profinsertNode(head_prof,pno,pe);
+				
+				/* also inserting based on name just for question(case) 8*/
+				 prof_name=insert_prof_name(prof_name,pno,pe);
+				if(sc==fail)
+				{
+				 	printf("Given entry already exist\n");
+				}
+				else
+				{
+				 	printf("\nprofessional Contact has been created\n");
+				}
+				
+			}
+			printf("\n");
+			break;
+			
+		case 2:
+			printf("choose 0 to edit personal 1 to edit professional:\n");
+			scanf("%d",&t);
+			sc=fail;
+			printf("enter number(key) of contact which is to be edited:\n");
+			int pNo;
+			scanf("%d",&pNo);
+			if(t==0)
+			{
+				printf("enter edited name,last-name,email:\n");
+				scanf("%s",e.name);
+				scanf("%s",e.last_name);
+				scanf("%s",e.mail);
+				edit_per(head_per,pNo,e);
+				if(sc!=fail)
+				{
+					printf("\npersonal Contact has been edited\n");
+				}
+				
+			}
+			else
+			{
+				printf("enter edited name,last-name,email,address,institute,officeNo:\n");
+				scanf("%s%s%s%s%s%d",pe.name,pe.last_name,pe.mail,pe.address,pe.institute,&pe.officeNo);
+				edit_prof(head_prof,pNo,pe);
+				if(sc!=fail)
+				{
+					printf("\nprofessional Contact has been edited\n");
+				}
+				
+			}
+			printf("\n");
+			break;
+			
+		case 3:
+			printf("choose 0 to delete personal 1 to delete professional:\n");
+			scanf("%d",&t);
+			sc=fail;
+			printf("enter number whose contact has to be deleted:\n");
+			int mobNo;
+			scanf("%d",&mobNo);
+			if(t==0)
+			{
+				head_per=deleteNode(head_per,mobNo);
+				printf("\npersonal Contact has been deleted\n");
+			}
+			else
+			{
+				head_prof=profdeleteNode(head_prof,mobNo);
+				printf("\nprofessional Contact has been deleted\n");
+			}
+			printf("\n");
+			break;
+			
+		case 4:
+			printf("choose 0 to search personal 1 to search professional:\n");
+			scanf("%d",&t);
+			sc=fail;
+			printf("enter mobile number:\n");
+			int mobn;
+			
+			scanf("%d",&mobn);
+			if(t==0)
+			{
+				search_per(head_per,mobn);
+			}
+			else
+			{
+				search_prof(head_prof,mobn);
+				
+			}
+			printf("\n");
+			break;
+			
+		case 5:
+			printf("choose 0 to print personal in ascending 1 print personal in descending\n"
+			" choose 2 to print professional in ascending 3 print professional in descending:\n");
+			scanf("%d",&t);
+			sc=fail;
+			if(t==0)
+			{
+				printf("phone-no,balance-factor,first-name,last-name,email:\n");
+				per_inorder(head_per);
+				if(sc==fail)
+				{
+					printf("\nTree is empty\n");
+				}
+			}
+			else if(t==1)
+			{
+				printf("phone-no,balance-factor,first-name,last-name,email:\n");
+				per_inorder_rev(head_per);
+				if(sc==fail)
+				{
+					printf("\nTree is empty\n");
+				}
+			}
+			else if(t==2)
+			{
+				printf("phone-no,balance-factor,first-name,last-name,email,address,institute,office-no:\n");
+				prof_inorder(head_prof);
+				if(sc==fail)
+				{
+					printf("\nTree is empty\n");
+				}
+			}
+			else
+			{
+				printf("phone-no,balance-factor,first-name,last-name,email,address,institute,office-no:\n");
+				prof_inorder_rev(head_prof);
+				if(sc==fail)
+				{
+					printf("\nTree is empty\n");
+				}
+			}
+			printf("\n");
+			break;
+			
+		case 6:
+			printf("choose 0 to display personal 1 to display professional:\n");
+			scanf("%d",&t);
+			sc=fail;
+			if(t==0)
+			{
+				printf("phone-no,balance-factor,first-name,last-name,email:\n");
+				per_inorder(head_per);
+				if(sc==fail)
+				{
+					printf("\nTree is empty\n");
+				}
+			}
+			else
+			{
+				printf("phone-no,balance-factor,first-name,last-name,email,address,institute,office-no:\n");
+				prof_inorder(head_prof);
+				if(sc==fail)
+				{
+					printf("\nTree is empty\n");
+				}
+			}
+			printf("\n");
+			break;
+			
+		case 7:
+			printf("choose 0 to range search in personal 1 to range search in professional:\n");
+			scanf("%d",&t);
+			sc=fail;
+			if(t==0)
+			{
+				int n1,n2;
+				printf("enter num1,num2:");
+				scanf("%d%d",&n1,&n2);
+				printf("phone-no,height,first-name,last-name,email:\n");
+				per_range(head_per,n1,n2);
+				if(sc==fail)
+				{
+					printf("\nNo such number exist in given range\n");
+				}
+			}
+			else
+			{
+				int n1,n2;
+				printf("enter num1,num2:");
+				scanf("%d%d",&n1,&n2);
+				printf("phone-no,height,first-name,last-name,email,address,institute,office-no:\n");
+				prof_range(head_prof,n1,n2);
+				if(sc==fail)
+				{
+					printf("\nNo such number exist in given range\n");
+				}
+				
+			}
+			printf("\n");
+			break;
+					
+		
+		case 8:
+			
+			printf("choose 0 to display personal sorted on name 1 to display professional sorted on name:\n");
+			scanf("%d",&t);
+			if(t==0)
+			{
+				printf("phone-no,balance-factor,first-name(sorted)),last-name,email:\n");
+				/* if we have inserted taking name as key in case 1 then tree would be:*/
+				per_inorder(per_name);
+				/*similarly if we have taken key as name we can delete,edit,search based on name also*/
+			}
+			else
+			{
+				printf("phone-no,balance-factor,first-name(sorted),last-name,email,address,institute,office-no:\n");
+				/* if we have inserted taking name as key in case 1 then tree would be:*/
+				prof_inorder(prof_name);
+				/*similarly if we have taken key as name we can delete,edit,search based on name also*/
+			}
+			printf("\n");
+			break;
+		
+		default:
+			printf("\nWrong argument try next time :)\n\n");
+			break;		
+		}
+	
+    printf("press 0 to exit 1 to continue:");
+    scanf("%d",&run);	
+    printf("\n");
+	}
+	
+	printf("\nThank you !!!!!!!!!!!!!!!!!!!!\n");
+	return  0;
+}
