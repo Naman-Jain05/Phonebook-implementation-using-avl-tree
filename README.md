@@ -1,5 +1,5 @@
-# Phonebook-implementation-using-avl-tree
-Problem Statement:
+# Problem Statement:
+
 
 A phonebook can be implemented as a tree (AVL-tree) where each node may represent first name, last name and mobile number and you may also add addition nodes like e-mail, office no., address, etc for every contacts. You can make personal contact (name, mobile number, email, type) and professional contact list (name, mobile number, email, office number, address,institute/office, type). Mobile number (considered as integer) can be considered as key of the record.
 You need to provide a field according to which personal and professional contacts would be separate. (Type: personal/professional). In addition, such a phonebook should keep track of number of phone calls made to different contacts, the date and the duration of the calls.
